@@ -1,4 +1,5 @@
-GOOGLETEST_DIR = $$PWD/googletest
+GOOGLETEST_DIR = $$PWD/../googletest
+message($${GOOGLETEST_DIR})
 include(gtest_dependency.pri)
 
 TEMPLATE = app
