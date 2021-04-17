@@ -2,22 +2,27 @@
 #include <thread>
 #include <atomic>
 #include <vector>
+#include <string>
+#include <sstream>
 #include <cassert>
 
-#include "test_for_fwd.h"
-#include "circular_buffer.h"
-#include "circular_buffer_lockfree.h"
+#include "circular_buffer_lockfree_srsw.h"
+#include "circular_buffer_blocked_mrmw.h"
+#include "circular_buffer_lockfree_mrmw.h"
 
 #define READER_COUNT 4
 #define WRITER_COUNT 4
 
-connest::CircularBufferLockfree<size_t> queue{128};
+#define ELEMENTS_COUNT 1000u
+
 using namespace std;
+
+connest::CircularBuffer_mrmw<size_t> queue{16};
 
 std::atomic<size_t> read_counter{0};
 std::atomic<size_t> write_counter{0};
 std::atomic<size_t> amount_readed{0};
-std::atomic<size_t> amount_writed{0};
+std::atomic<size_t> amount_written{0};
 
 
 void reader()
@@ -26,14 +31,24 @@ void reader()
     size_t value_old{0};
 
     while(true) {
-        bool success = queue.pop(value);
+        bool success = queue.try_pop(value);
+//        bool success = true;
+//        queue.pop_wait(value);
         if(success) {
             ++amount_readed;
 
-            if(value_old >= value)
-                std::cout << "error: old = " << value << " new = " << value;
+
+            assert(value_old < value);
 
             read_counter += value;
+
+//            if(read_counter == write_counter) {
+//                stringstream s;
+//                s << "reader at: "
+//                  << read_counter;
+
+//                std::cout << s.str() << std::endl;
+//            }
         }
 
     }
@@ -42,23 +57,24 @@ void reader()
 
 void writter()
 {
-    for(size_t i = 1; i < 1000u;)
+    for(size_t i = 1; i < ELEMENTS_COUNT;)
     {
-        if(queue.push_back(i)) {
+        if(queue.try_push_back(i))
+//        queue.push_back_wait(i);
+        {
             write_counter += i;
             ++i;
-            amount_writed++;
+            amount_written++;
         }
     }
-    std::cout << "writter end with: " << write_counter << std::endl;
+
+    stringstream s;
+    s << "writter end with: " << write_counter;
+
+    std::cout << s.str() << std::endl;
 }
 int main()
 {
-    connest::CircularBuffer<int> c{20};
-    c.push_back(9999);
-
-    test_for_fwd f(c);
-    return 0;
 
     std::vector<std::thread> writters;
     std::vector<std::thread> readers;
@@ -88,7 +104,7 @@ int main()
     std::cout << "readers end with: " << read_counter << std::endl;
     std::cout << "difference (expected 0): " << (int)(read_counter - write_counter) << std::endl;
     std::cout << "readed: " << amount_readed << std::endl;
-    std::cout << "writed: " << amount_writed << std::endl;
+    std::cout << "writed: " << amount_written << std::endl;
 
     assert((read_counter - write_counter) == 0);
 

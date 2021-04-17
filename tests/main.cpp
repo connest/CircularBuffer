@@ -1,5 +1,6 @@
-#include "tst_circular_buffer_lockfree.h"
-#include "tst_circular_buffer.h"
+#include "tst_circular_buffer_lockfree_mrmw.h"
+#include "tst_circular_buffer_blocked_mrmw.h"
+#include "tst_circular_buffer_lockfree_srsw.h"
 
 #include <gtest/gtest.h>
 
