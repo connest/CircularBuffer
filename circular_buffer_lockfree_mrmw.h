@@ -3,12 +3,12 @@
 
 #include <vector>
 #include <atomic>
+#include <type_traits>
 
 namespace connest {
 
 /**
-  @brief The CircularBuffer_mrmw class
-         Кольцевой lockfree буфер multiple reader - multiple writer
+  @brief Кольцевой lockfree буфер multiple reader - multiple writer
   @details
         R'          R
         |           |
@@ -22,7 +22,7 @@ namespace connest {
 
   R' - R  => ждет прочтения (RRR)
   W' - W  => ждет записи    (WWW)
-  W  - R' => свободное место
+  W  - R' => свободное место1
 
   RES - зарезервированный элемент, чтобы отличать
         состояния "пуст" и "заполнен"
@@ -37,6 +37,11 @@ namespace connest {
 template<typename T>
 class CircularBuffer_mrmw
 {
+    static_assert (     std::is_nothrow_move_assignable<T>::value
+                    &&  std::is_nothrow_copy_assignable<T>::value
+                    &&  std::is_nothrow_constructible<T>::value,
+    "Type T must not throw exceptions in ctor and in assign operator");
+
     std::vector<T> m_data;
 
     std::atomic<size_t> m_R;
