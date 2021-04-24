@@ -37,11 +37,17 @@ namespace connest {
 template<typename T>
 class CircularBuffer_mrmw
 {
-    static_assert (     std::is_nothrow_move_assignable<T>::value
-                    &&  std::is_nothrow_copy_assignable<T>::value
-                    &&  std::is_nothrow_constructible<T>::value
-                    &&  std::is_nothrow_default_constructible<T>::value,
-    "Type T must not throw exceptions in ctor and in assign operator");
+    static_assert (     std::is_default_constructible<T>::value,
+                    "Type T must be default constructible: empty buffer should "
+                    "have initialized elements");
+
+    static_assert(      std::is_nothrow_move_assignable<T>::value
+                    || !std::is_move_assignable<T>::value,
+                    "Type T must not throw in move assign operator");
+
+    static_assert(      std::is_nothrow_copy_assignable<T>::value
+                    ||  !std::is_copy_assignable<T>::value,
+                    "Type T must not throw in copy assign operator");
 
     std::vector<T> m_data;
 
@@ -181,7 +187,7 @@ bool CircularBuffer_mrmw<T>::try_pop(T& result)
                     ))
             continue;
 
-        result = m_data.at(currentR);
+        result = std::move_if_noexcept(m_data.at(currentR));
 
         do {
             // currentW_complite_copy изменится (примет текущее значение),

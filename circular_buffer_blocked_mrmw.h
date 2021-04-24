@@ -15,6 +15,10 @@ namespace connest {
 template <typename T>
 class CircularBuffer_mrmw_blocked
 {
+    static_assert ( std::is_default_constructible<T>::value,
+                    "Type T must be default constructible: empty buffer should "
+                    "have initialized elements");
+
     std::vector<T> m_data;
 
     mutable std::mutex m_mutex;
@@ -218,7 +222,7 @@ bool CircularBuffer_mrmw_blocked<T>::try_pop(T &result)
         return false;
 
 
-    result = m_data.at(m_head);
+    result = std::move_if_noexcept(m_data.at(m_head));
     m_head = next(m_head);
 
     m_cv.notify_one();
@@ -240,7 +244,7 @@ void CircularBuffer_mrmw_blocked<T>::pop_wait(T &result)
     if(m_delete)
         return;
 
-    result = m_data.at(m_head);
+    result = std::move_if_noexcept(m_data.at(m_head));
     m_head = next(m_head);
 
     m_cv.notify_one();

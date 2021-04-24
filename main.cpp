@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <random>
 #include <cassert>
 
 #include "circular_buffer_lockfree_srsw.h"
@@ -13,11 +14,73 @@
 #define WRITER_COUNT 4
 #define ELEMENTS_COUNT 1000u
 
+
+
+class CrazyCopyClass {
+    std::string m_str;
+    size_t m_value;
+
+    void sleepForCrazy() const {
+        std::mt19937 gen(std::random_device{}());
+        std::uniform_int_distribution<> dist(m_value % 140, 150);
+        std::this_thread::sleep_for(std::chrono::nanoseconds(dist(gen)));
+    }
+
+public:
+    CrazyCopyClass(size_t value = 0) noexcept
+        : m_str{"It is not small string. I want to be in heap!"}
+        , m_value{value}
+    {
+        sleepForCrazy();
+    }
+
+    CrazyCopyClass(const CrazyCopyClass& other) noexcept
+        : m_str{"It is not small string. I want to be in heap!"}
+        , m_value{other.m_value}
+    {
+        sleepForCrazy();
+    }
+    CrazyCopyClass(CrazyCopyClass&& other) noexcept
+        : m_str{std::move(other.m_str)}
+        , m_value{other.m_value}
+    {
+        sleepForCrazy();
+    }
+    ~CrazyCopyClass() = default;
+
+    const std::string& str() const {
+        return m_str;
+    }
+
+    operator size_t() const {
+        return m_value;
+    }
+
+    CrazyCopyClass& operator=(const CrazyCopyClass& other) noexcept // noexcept - ВАЖЕН
+    {
+        sleepForCrazy();
+        m_value = other.m_value;
+        m_str = other.m_str;
+        return *this;
+    }
+
+    CrazyCopyClass& operator=(CrazyCopyClass&& other) noexcept // noexcept - ВАЖЕН
+    {
+        sleepForCrazy();
+        m_value = other.m_value;
+        m_str = std::move(other.m_str);
+        return *this;
+    }
+
+};
+
+
+
 // Собственно кольцевой буфер
-//                   хранимый тип данных
-//                          vvvvvvv
-connest::CircularBuffer_mrmw<size_t> queue{16};
-//                                        ^^^^
+//                        хранимый тип данных
+//                          vvvvvvvvvvvvvvv
+connest::CircularBuffer_mrmw<CrazyCopyClass> queue{16};
+//                                                ^^^^
 //                               размер буфера в элементах
 
 // сумма значений считанных элементов
@@ -31,9 +94,10 @@ std::atomic<size_t> amount_readed{0};
 std::atomic<size_t> amount_written{0};
 
 
+
 void reader()
 {
-    size_t value{0};
+    /*size_t*/ CrazyCopyClass value{0};
     while(true) {
         if(queue.try_pop(value)) {
             ++amount_readed;
@@ -46,11 +110,14 @@ void reader()
 void writter()
 {
     for(size_t i = 1; i < ELEMENTS_COUNT;) {
-        if(queue.try_push_back(i)) {
+
+        CrazyCopyClass value{i};
+        if(queue.try_push_back(value)) {
             write_counter += i;
             ++i;
             ++amount_written;
         }
+        assert(!value.str().empty());
     }
 
     std::stringstream s;

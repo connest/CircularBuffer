@@ -4,6 +4,7 @@
 #include <vector>
 #include <atomic>
 #include <stdexcept>
+#include <type_traits>
 
 namespace connest {
 
@@ -34,6 +35,10 @@ namespace connest {
 template <typename T>
 class CircularBuffer_srsw
 {
+    static_assert ( std::is_default_constructible<T>::value,
+                    "Type T must be default constructible: empty buffer should "
+                    "have initialized elements");
+
     std::vector<T> m_data;
     std::atomic<size_t> m_head;
     std::atomic<size_t> m_tail;
@@ -52,6 +57,7 @@ public:
         iterator(size_t index, CircularBuffer_srsw<T>& container);
         iterator(const iterator&) = default;
         iterator(iterator&&) = default;
+        ~iterator() = default;
         iterator& operator++();
         iterator& operator--();
         reference operator*();
@@ -90,6 +96,7 @@ public:
         const_iterator(size_t index, const CircularBuffer_srsw<T>& container);
         const_iterator(const const_iterator&) = default;
         const_iterator(const_iterator&&) = default;
+        ~const_iterator() = default;
         const_iterator& operator++();
         const_iterator& operator--();
         reference operator*() const;
@@ -120,6 +127,7 @@ public:
 
 
     CircularBuffer_srsw(size_t size);
+    ~CircularBuffer_srsw() = default;
 
     CircularBuffer_srsw(const CircularBuffer_srsw& other);
 
@@ -251,7 +259,7 @@ private:
 template<typename T>
 CircularBuffer_srsw<T>::CircularBuffer_srsw(size_t size)
     : m_data(size + 1)  // +1 - резервный элемент, чтобы отличать состояния
-    // "пуст" и "полон"
+                        // "пуст" и "полон"
     , m_head{0}
     , m_tail{0}
 {}
@@ -369,7 +377,7 @@ bool CircularBuffer_srsw<T>::try_pop(T &result)
 
     size_t head = m_head.load(std::memory_order_acquire);
 
-    result = m_data.at(head);
+    result = std::move_if_noexcept(m_data.at(head));
 
     m_head.store(next(head), std::memory_order_release);
 
