@@ -39,7 +39,8 @@ class CircularBuffer_mrmw
 {
     static_assert (     std::is_nothrow_move_assignable<T>::value
                     &&  std::is_nothrow_copy_assignable<T>::value
-                    &&  std::is_nothrow_constructible<T>::value,
+                    &&  std::is_nothrow_constructible<T>::value
+                    &&  std::is_nothrow_default_constructible<T>::value,
     "Type T must not throw exceptions in ctor and in assign operator");
 
     std::vector<T> m_data;
@@ -55,31 +56,31 @@ public:
     CircularBuffer_mrmw(size_t size);
 
     /**
-     * @brief max_size Получить максимальную вместимость буфера
+     * @brief Получить максимальную вместимость буфера
      * @return максимальная вместимость буфера
      */
     size_t max_size() const noexcept;
 
     /**
-     * @brief size Текущая заполненость буфера
+     * @brief Текущая заполненость буфера
      * @return текущая заполненость буфера (в элементах)
      */
     size_t size() const noexcept;
 
     /**
-     * @brief full Проверить заполнен ли буфер
+     * @brief Проверить заполнен ли буфер
      * @return флаг заполнености
      */
     bool full() const noexcept;
 
     /**
-     * @brief full роверить пуст ли буфер
+     * @brief Проверить пуст ли буфер
      * @return флаг пустоты
      */
     bool empty() const noexcept;
 
     /**
-     * @brief push_back Добавить элемент в конец буфера
+     * @brief Добавить элемент в конец буфера
      * @param value записиваемое значение
      * @return флаг успешности операции (буфер может быть переполнен)
      */
@@ -87,7 +88,7 @@ public:
     bool try_push_back(Type&& value);
 
     /**
-     * @brief pop Получить очередное значение из буфера
+     * @brief Получить очередное значение из буфера
      * @param result место, куда будет записано значение
      * @return флаг успешности операции (буфер может быть пуст)
      */
@@ -95,7 +96,7 @@ public:
 private:
 
     /**
-     * @brief next Получить индекс в кольцевом буфере через step элементов
+     * @brief Получить индекс в кольцевом буфере через step элементов
      * @param position  текущая позиция
      * @param step      количество пропускаемых элементов
      * @return индекс в кольцевом буфере

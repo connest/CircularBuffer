@@ -8,8 +8,7 @@
 namespace connest {
 
 /**
-  @brief    The CircularBuffer_srsw class
-            Кольцевой lockfree буфер single reader - single writter
+  @brief Кольцевой lockfree буфер single reader - single writter
   @details
 
                 R
@@ -130,51 +129,50 @@ public:
     CircularBuffer_srsw(ForwardInputIterator begin, ForwardInputIterator end);
 
     /**
-     * @brief empty Определить пуст ли буфер
+     * @brief Определить пуст ли буфер
      * @return флаг пустоты буфера
      */
     bool empty() const noexcept;
 
     /**
-     * @brief clear
-     * Очистить буфер
+     * @brief Очистить буфер
      */
     void clear() noexcept;
 
     /**
-     * @brief full Определить полон ли буфер
+     * @brief Определить полон ли буфер
      * @return флаг полноты буфера
      */
     bool full() const noexcept;
 
     /**
-     * @brief size Получить количество элементов в буфере
+     * @brief Получить количество элементов в буфере
      * @return количетсво элементов
      */
     size_t size() const noexcept;
 
     /**
-     * @brief max_size Получить размер буфера
+     * @brief Получить размер буфера
      * @return маскимальное количество элементов в буфере
      */
     size_t max_size() const noexcept;
 
     /**
-     * @brief at Получить доступ к элементу буфера без изменения его состояния
+     * @brief Получить доступ к элементу буфера без изменения его состояния
      * @param pos индекс элемента
      * @return ссылка на элемент
      */
     T& at(size_t pos);
 
     /**
-     * @brief at Получить доступ к элементу буфера без изменения его состояния
+     * @brief Получить доступ к элементу буфера без изменения его состояния
      * @param pos индекс элемента
      * @return ссылка на элемент
      */
     const T& at(size_t pos) const;
 
     /**
-     * @brief try_push_back Добавить элемент в конец буфера
+     * @brief Добавить элемент в конец буфера
      * @param value значение элемента
      * @return флаг успешности добавления (буфер может быть заполнен)
      */
@@ -182,7 +180,7 @@ public:
     bool try_push_back(Type&& value);
 
     /**
-     * @brief try_emplace_back Создать и добавить элемент в конец буфера
+     * @brief Создать и добавить элемент в конец буфера
      * @param args параметры конструктора типа T
      * @return флаг успешности добавления (буфер может быть заполнен)
      */
@@ -190,14 +188,14 @@ public:
     bool try_emplace_back(Args&& ... args);
 
     /**
-     * @brief pop Получить очередной элемент буфера
+     * @brief Получить очередной элемент буфера
      * @param result ссылка, куда должко быть положено значение
      * @return флаг успешности добавления (буфер может быть пуст)
      */
     bool try_pop(T& result);
 
     /**
-     * @brief push_back_all Добавить элементы из диапазона контейнера в буфер
+     * @brief Добавить элементы из диапазона контейнера в буфер
      * @param begin итератор начала диапазона контейнера
      * @param end   итератор конца диапазона контейнера
      * @return количество записанных элементов
@@ -206,7 +204,7 @@ public:
     size_t push_back_all(ForwardInputIterator begin, ForwardInputIterator end);
 
     /**
-     * @brief pop_all Получить все доступные элементы в контейнер
+     * @brief Получить все доступные элементы в контейнер
      * @param container контейнер назначения
      * @return количество полученных элементов
      */
@@ -214,31 +212,32 @@ public:
     size_t pop_all(ContainerType& container);
 
     /**
-     * @brief begin Получить итератор на начало контейнера
+     * @brief Получить итератор на начало контейнера
      * @return итератор на первый элемент
      */
     iterator begin();
 
     /**
-     * @brief begin Получить итератор на конец контейнера
+     * @brief Получить итератор на конец контейнера
      * @return итератор за последним элементом
      */
     iterator end();
 
     /**
-     * @brief begin Получить константный итератор на начало контейнера
+     * @brief Получить константный итератор на начало контейнера
      * @return итератор на первый элемент
      */
     const_iterator cbegin() const;
 
     /**
-     * @brief begin Получить константный итератор на конец контейнера
+     * @brief Получить константный итератор на конец контейнера
      * @return итератор за последним элементом
      */
     const_iterator cend() const;
+
 private:
     /**
-     * @brief next Получить позицию в кольцевом буфере
+     * @brief Получить позицию в кольцевом буфере
      * @param position текущая позиция
      * @param n        количество сдвигов
      * @return новая позиция

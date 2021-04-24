@@ -5,8 +5,8 @@ CONFIG -= qt
 
 QMAKE_CXXFLAGS += -pedantic-errors -Wall -Wextra -Weffc++
 
-#LIBS += -lgcov
-#QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
+LIBS += -lgcov
+QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
 
 SOURCES += \
         main.cpp

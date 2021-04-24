@@ -9,8 +9,7 @@
 
 namespace connest {
 /**
-  @brief    The CircularBuffer_mrmw_blocked class
-            Циклический буфер multiple reader - multiple writter
+  @brief    Циклический буфер multiple reader - multiple writter
             основанный на блокировании мьютекса
  */
 template <typename T>
@@ -36,37 +35,37 @@ public:
     ~CircularBuffer_mrmw_blocked();
 
     /**
-     * @brief size Получить размер данных в буфере
+     * @brief Получить размер данных в буфере
      * @return количество элементов в буфере
      */
     size_t size() const noexcept;
 
     /**
-     * @brief resize Изменить размер буфера
+     * @brief Изменить размер буфера
      * @param newSize Новый размер
      */
     void resize(size_t newSize) noexcept;
 
     /**
-     * @brief max_size Получить размер буфера
+     * @brief Получить размер буфера
      * @return максимальное количество элементов в буфере
      */
     size_t max_size() const noexcept;
 
     /**
-     * @brief empty Проверить буфер на пустоту
+     * @brief Проверить буфер на пустоту
      * @return флаг пустоты
      */
     bool empty() const noexcept;
 
     /**
-     * @brief full Проверить буфер на заполненность
+     * @brief Проверить буфер на заполненность
      * @return флаг полноты
      */
     bool full() const noexcept;
 
     /**
-     * @brief push_back Попытаться добавить элемент в буфер
+     * @brief Попытаться добавить элемент в буфер
      * @param value значение элемента
      * @return флаг успешности операции
      */
@@ -74,37 +73,35 @@ public:
     bool try_push_back(Type&& value);
 
     /**
-     * @brief push_back_wait
-     * Добавить элемент в буфер.
-     * Если буфер заполнен, приостановить выполнения потока
+     * @brief   Добавить элемент в буфер.
+     *          Если буфер заполнен, приостановить выполнения потока
      * @param value значение элемента
      */
     template<typename Type>
     void push_back_wait(Type&& value);
 
     /**
-     * @brief pop Попытаться получить очередной элемент.
+     * @brief Попытаться получить очередной элемент.
      * @param result Ссылка на место помещения результата
      * @return успешность операции
      */
     bool try_pop(T& result);
 
     /**
-     * @brief pop_wait
-     * Получить очередной элемент.
-     * Если буфер пуст, приостановить выполнения потока
+     * @brief   Получить очередной элемент.
+     *          Если буфер пуст, приостановить выполнения потока
      * @param result Ссылка на место помещения результата
      */
     void pop_wait(T& result);
 
     /**
-     * @brief clear Очистить буфер
+     * @brief Очистить буфер
      */
     void clear();
 
 private:
     /**
-     * @brief next Получить очередную позицию в кольцевом буфере
+     * @brief Получить очередную позицию в кольцевом буфере
      * @param position  Текущая позиция
      * @param n         Количество пропускаемых элементов
      * @return новая позиция
@@ -112,25 +109,22 @@ private:
     size_t next(size_t position, size_t n = 1) const noexcept;
 
     /**
-     * @brief size_unsafe
-     * Получить размер данных в буфере.
-     * Без блокировки мьютекса
+     * @brief   Получить размер данных в буфере.
+     *          Без блокировки мьютекса
      * @return количество элементов в буфере
      */
     size_t size_unsafe() const noexcept;
 
     /**
-     * @brief full_unsafe
-     * Проверить буфер на заполненность.
-     * Без блокировки мьютекса
+     * @brief   Проверить буфер на заполненность.
+     *          Без блокировки мьютекса
      * @return флаг полноты
      */
     bool full_unsafe() const noexcept;
 
     /**
-     * @brief empty_unsafe
-     * Проверить буфер на пустоту.
-     * Без блокировки мьютекса
+     * @brief   Проверить буфер на пустоту.
+     *          Без блокировки мьютекса
      * @return флаг пустоты
      */
     bool empty_unsafe() const noexcept;
