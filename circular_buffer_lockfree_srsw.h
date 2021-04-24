@@ -543,7 +543,7 @@ bool CircularBuffer_srsw<T>::iterator::operator>=(
         const CircularBuffer_srsw<T>::iterator& other
         ) const
 {
-    return m_index > other.m_index;
+    return m_index >= other.m_index;
 }
 
 template<typename T>
@@ -582,7 +582,7 @@ bool CircularBuffer_srsw<T>::iterator::operator>=(
         const CircularBuffer_srsw<T>::const_iterator& other
         ) const
 {
-    return m_index > other.m_index;
+    return m_index >= other.m_index;
 }
 
 // const iterator
