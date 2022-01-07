@@ -7,9 +7,10 @@
 #include <random>
 #include <cassert>
 
-#include "circular_buffer_lockfree_srsw.h"
-#include "circular_buffer_blocked_mrmw.h"
-#include "circular_buffer_lockfree_mrmw.h"
+#include <circular_buffer/circular_buffer_lockfree_srsw.h>
+#include <circular_buffer/circular_buffer_blocked_mrmw.h>
+#include <circular_buffer/circular_buffer_lockfree_mrmw.h>
+
 #define READER_COUNT 4
 #define WRITER_COUNT 4
 #define ELEMENTS_COUNT 1000u

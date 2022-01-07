@@ -6,8 +6,8 @@
 
 using namespace testing;
 
-#include "../circular_buffer_fwd.h"
-#include "../circular_buffer_lockfree_mrmw.h"
+#include <circular_buffer/circular_buffer_fwd.h>
+#include <circular_buffer/circular_buffer_lockfree_mrmw.h>
 
 
 TEST(circular_buffer_lockfree_tests, is_empty)

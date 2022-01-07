@@ -1,6 +1,7 @@
 # This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
 build*
+*.user
 *~
 *.autosave
 *.a
@@ -71,3 +72,5 @@ Thumbs.db
 *.dll
 *.exe
 
+
+tests/dependencies/googletest/

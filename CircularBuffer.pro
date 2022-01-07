@@ -12,7 +12,9 @@ SOURCES += \
         main.cpp
 
 HEADERS += \
-    circular_buffer_blocked_mrmw.h \
-    circular_buffer_fwd.h \
-    circular_buffer_lockfree_mrmw.h \
-    circular_buffer_lockfree_srsw.h
+    include/circular_buffer/circular_buffer_blocked_mrmw.h \
+    include/circular_buffer/circular_buffer_fwd.h \
+    include/circular_buffer/circular_buffer_lockfree_mrmw.h \
+    include/circular_buffer/circular_buffer_lockfree_srsw.h
+
+INCLUDEPATH += $$PWD/include
