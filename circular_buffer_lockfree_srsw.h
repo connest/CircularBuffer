@@ -33,7 +33,7 @@ namespace connest {
   W + 1 --> R - 1 - свободное место
  */
 template <typename T>
-class CircularBuffer_srsw
+class CircularBuffer_srsw final
 {
     static_assert ( std::is_default_constructible<T>::value,
                     "Type T must be default constructible: empty buffer should "
@@ -46,7 +46,7 @@ class CircularBuffer_srsw
 public:
     struct const_iterator;
 
-    struct iterator
+    struct iterator final
     {
         using iterator_category = std::random_access_iterator_tag;
         using difference_type   = size_t;
@@ -86,7 +86,7 @@ public:
         CircularBuffer_srsw<T>& m_container;
     };
 
-    struct const_iterator
+    struct const_iterator final
     {
         using iterator_category = std::random_access_iterator_tag;
         using difference_type   = size_t;
@@ -129,12 +129,15 @@ public:
     CircularBuffer_srsw(size_t size);
     ~CircularBuffer_srsw() = default;
 
-    CircularBuffer_srsw(const CircularBuffer_srsw& other);
-
-    CircularBuffer_srsw(CircularBuffer_srsw&& other);
-
     template<typename ForwardInputIterator>
     CircularBuffer_srsw(ForwardInputIterator begin, ForwardInputIterator end);
+
+
+    CircularBuffer_srsw(const CircularBuffer_srsw& other) = delete;
+    CircularBuffer_srsw(CircularBuffer_srsw&& other) = delete;
+    CircularBuffer_srsw& operator=(const CircularBuffer_srsw&) = delete;
+    CircularBuffer_srsw& operator=(CircularBuffer_srsw&&) = delete;
+
 
     /**
      * @brief Определить пуст ли буфер
@@ -264,19 +267,6 @@ CircularBuffer_srsw<T>::CircularBuffer_srsw(size_t size)
     , m_tail{0}
 {}
 
-template<typename T>
-CircularBuffer_srsw<T>::CircularBuffer_srsw(const CircularBuffer_srsw<T> &other)
-    : m_data{other.m_data}
-    , m_head{other.m_head.load(std::memory_order_acquire)}
-    , m_tail{other.m_tail.load(std::memory_order_acquire)}
-{}
-
-template<typename T>
-CircularBuffer_srsw<T>::CircularBuffer_srsw(CircularBuffer_srsw<T> &&other)
-    : m_data{std::move(other.m_data)}
-    , m_head{other.m_head.load(std::memory_order_acquire)}
-    , m_tail{other.m_tail.load(std::memory_order_acquire)}
-{}
 
 template<typename T>
 template<typename ForwardInputIterator>

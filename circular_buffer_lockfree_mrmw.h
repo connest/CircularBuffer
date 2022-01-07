@@ -7,6 +7,9 @@
 
 namespace connest {
 
+using std::size_t;
+
+
 /**
   @brief Кольцевой lockfree буфер multiple reader - multiple writer
   @details
@@ -35,7 +38,7 @@ namespace connest {
  */
 
 template<typename T>
-class CircularBuffer_mrmw
+class CircularBuffer_mrmw final
 {
     static_assert (     std::is_default_constructible<T>::value,
                     "Type T must be default constructible: empty buffer should "

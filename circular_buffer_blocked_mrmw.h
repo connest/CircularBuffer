@@ -13,7 +13,7 @@ namespace connest {
             основанный на блокировании мьютекса
  */
 template <typename T>
-class CircularBuffer_mrmw_blocked
+class CircularBuffer_mrmw_blocked final
 {
     static_assert ( std::is_default_constructible<T>::value,
                     "Type T must be default constructible: empty buffer should "
@@ -32,9 +32,9 @@ class CircularBuffer_mrmw_blocked
 public:
     CircularBuffer_mrmw_blocked(size_t size);
 
-    CircularBuffer_mrmw_blocked(const CircularBuffer_mrmw_blocked& other);
+    CircularBuffer_mrmw_blocked(const CircularBuffer_mrmw_blocked& other) = delete;
+    CircularBuffer_mrmw_blocked(CircularBuffer_mrmw_blocked&& other) = delete;
 
-    CircularBuffer_mrmw_blocked(CircularBuffer_mrmw_blocked&& other);
 
     ~CircularBuffer_mrmw_blocked();
 
@@ -147,26 +147,6 @@ CircularBuffer_mrmw_blocked<T>::CircularBuffer_mrmw_blocked(size_t size)
     , m_cv{}
     , m_head{}
     , m_tail{}
-    , m_delete{false}
-{}
-
-template<typename T>
-CircularBuffer_mrmw_blocked<T>::CircularBuffer_mrmw_blocked(const CircularBuffer_mrmw_blocked &other)
-    : m_data{other.m_data} // +1 для определения "полон" / "пуст"
-    , m_mutex{}
-    , m_cv{}
-    , m_head{other.m_head}
-    , m_tail{other.m_tail}
-    , m_delete{false}
-{}
-
-template<typename T>
-CircularBuffer_mrmw_blocked<T>::CircularBuffer_mrmw_blocked(CircularBuffer_mrmw_blocked &&other)
-    : m_data{std::move(other.m_data)} // +1 для определения "полон" / "пуст"
-    , m_mutex{}
-    , m_cv{}
-    , m_head{other.m_head}
-    , m_tail{other.m_tail}
     , m_delete{false}
 {}
 
