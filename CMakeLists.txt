@@ -21,14 +21,14 @@ target_include_directories(${PROJECT_NAME}
 
 
 # tests
-set(${PROJECT_NAME}_BUILD_TESTS ON)
+option(${PROJECT_NAME}_BUILD_TESTS OFF)
 if(${PROJECT_NAME}_BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
 
 
-set(${PROJECT_NAME}_BUILD_EXAMPLE ON)
+option(${PROJECT_NAME}_BUILD_EXAMPLE OFF)
 if(${PROJECT_NAME}_BUILD_EXAMPLE)
     add_executable(${PROJECT_NAME}_example
         main.cpp
